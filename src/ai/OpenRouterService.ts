@@ -1,4 +1,9 @@
 // OpenRouter service - client for LLM inference via OpenRouter
+//
+// WARNING: The API key (INK_OPENROUTER_API_KEY) is embedded into the client
+// bundle at build time and visible in browser DevTools. Only use a scoped,
+// low-privilege, rate-limited key. For production, route calls through a
+// backend proxy that holds the secret server-side.
 
 import { OpenRouter } from '@openrouter/sdk';
 
@@ -6,20 +11,18 @@ let openRouterInstance: OpenRouter | null = null;
 
 function getOpenRouter(): OpenRouter {
   if (!openRouterInstance) {
-    const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    const apiKey = import.meta.env.INK_OPENROUTER_API_KEY;
     if (!apiKey) {
       throw new Error(
-        'VITE_OPENROUTER_API_KEY is not set. ' +
+        'INK_OPENROUTER_API_KEY is not set. ' +
         'Add it to your .env.local file (see .env.example).'
       );
     }
 
     openRouterInstance = new OpenRouter({
       apiKey,
-      defaultHeaders: {
-        'HTTP-Referer': import.meta.env.VITE_OPENROUTER_SITE_URL || window.location.origin,
-        'X-OpenRouter-Title': import.meta.env.VITE_OPENROUTER_SITE_NAME || 'Ink Playground',
-      },
+      httpReferer: import.meta.env.INK_OPENROUTER_SITE_URL || window.location.origin,
+      xTitle: import.meta.env.INK_OPENROUTER_SITE_NAME || 'Ink Playground',
     });
   }
   return openRouterInstance;
@@ -55,8 +58,8 @@ export async function chatCompletion(
 ): Promise<string> {
   const client = getOpenRouter();
 
-  // Map our camelCase responseFormat to the SDK's expected shape
-  let responseFormat: Record<string, unknown> | undefined;
+  // Map our responseFormat to the SDK's expected shape
+  let responseFormat: { type: 'json_object' } | { type: 'json_schema'; jsonSchema: { name: string; strict?: boolean; schema: Record<string, unknown> } } | undefined;
   if (options.responseFormat === 'json') {
     responseFormat = { type: 'json_object' };
   } else if (options.responseFormat) {
@@ -66,16 +69,22 @@ export async function chatCompletion(
     };
   }
 
-  const completion = await client.chat.send({
-    model: options.model ?? DEFAULT_MODEL,
-    messages,
-    stream: false,
-    temperature: options.temperature,
-    max_tokens: options.maxTokens,
-    responseFormat,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const completion: any = await client.chat.send({
+    chatGenerationParams: {
+      model: options.model ?? DEFAULT_MODEL,
+      // Cast messages — our ChatMessage type is compatible but TS can't
+      // narrow the discriminated union from a mapped array.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      messages: messages as any,
+      stream: false,
+      temperature: options.temperature,
+      maxTokens: options.maxTokens,
+      responseFormat,
+    },
   });
 
-  return completion.choices[0]?.message?.content?.toString() ?? '';
+  return completion?.choices?.[0]?.message?.content?.toString() ?? '';
 }
 
 /**
@@ -96,5 +105,5 @@ export async function chatCompletionJSON<T = unknown>(
  * Check whether the OpenRouter API key is configured.
  */
 export function isOpenRouterConfigured(): boolean {
-  return !!import.meta.env.VITE_OPENROUTER_API_KEY;
+  return !!import.meta.env.INK_OPENROUTER_API_KEY;
 }
