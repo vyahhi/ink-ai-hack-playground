@@ -16,6 +16,7 @@ import './shape';
 import './sketchableimage';
 import './stroke';
 import './sudoku';
+import './tango';
 import './tictactoe';
 
 // Re-export registry for convenience
