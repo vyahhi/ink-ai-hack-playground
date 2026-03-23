@@ -32,7 +32,7 @@ export type Element =
   | BridgesElement
   | MinesweeperElement
   | NonogramElement
-  | TangoElement;
+  | TangoElement
   | QueensElement;
 
 // Check if element supports background color
