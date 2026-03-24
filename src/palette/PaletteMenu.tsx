@@ -3,9 +3,10 @@
 // Displays palette options when a rectangle+X gesture is detected.
 // Follows the same pattern as DisambiguationMenu.
 
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { PaletteIntent, PaletteAction } from './PaletteIntent';
 import type { Offset } from '../types';
+import { computePaletteGridLayout } from './paletteGridLayout';
 
 export interface PaletteMenuProps {
   intent: PaletteIntent | null;
@@ -59,7 +60,13 @@ export function PaletteMenu({
     onAction('dismiss');
   }, [onAction]);
 
-  if (!intent || intent.entries.length === 0) {
+  const entries = intent?.entries;
+  const layout = useMemo(
+    () => entries ? computePaletteGridLayout(entries) : null,
+    [entries],
+  );
+
+  if (!intent || !layout || intent.entries.length === 0) {
     return null;
   }
 
@@ -106,58 +113,93 @@ export function PaletteMenu({
           Create element...
         </div>
 
-        {/* Entry buttons */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
-          {intent.entries.map((entry, index) => (
-            <React.Fragment key={entry.id}>
-              {index > 0 && (
-                <div style={{ width: '1px', backgroundColor: '#e0e0e0' }} />
-              )}
-              <button
-                onClick={(e) => handleSelectEntry(e, entry.id)}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '10px 12px',
-                  border: 'none',
-                  background: 'none',
-                  cursor: 'pointer',
-                  color: '#333',
-                  gap: '4px',
-                  transition: 'background-color 0.15s',
-                  minWidth: '56px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f0f7ff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-                title={entry.label}
-              >
-                <entry.Icon />
-                <span style={{ fontSize: '10px' }}>{entry.label}</span>
-              </button>
-            </React.Fragment>
+        {/* Grid: category labels + buttons sharing column tracks */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: layout.gridTemplateColumns,
+          gridTemplateRows: 'auto auto',
+        }}>
+          {/* Row 1: category labels spanning their groups */}
+          {layout.groupSpans.map((span, gi) => (
+            <div
+              key={span.category}
+              style={{
+                gridRow: 1,
+                gridColumn: `${span.start} / ${span.end}`,
+                fontSize: '9px',
+                color: '#999',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                textAlign: 'center',
+                padding: '3px 4px',
+                lineHeight: 1,
+                borderBottom: '1px solid #e0e0e0',
+                ...(gi > 0 ? { borderLeft: '1px solid #d0d0d0' } : {}),
+              }}
+            >
+              {span.label}
+            </div>
           ))}
-          {/* Dismiss button */}
-          <div style={{ width: '1px', backgroundColor: '#e0e0e0' }} />
+
+          {/* Row 2: entry buttons */}
+          {intent.entries.map((entry, index) => (
+            <button
+              key={entry.id}
+              onClick={(e) => handleSelectEntry(e, entry.id)}
+              style={{
+                gridRow: 2,
+                gridColumn: layout.entryColumns[index],
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '10px 12px',
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                color: '#333',
+                gap: '4px',
+                transition: 'background-color 0.15s',
+                minWidth: '56px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f0f7ff';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              title={entry.label}
+            >
+              <entry.Icon />
+              <span style={{ fontSize: '10px' }}>{entry.label}</span>
+            </button>
+          ))}
+
+          {/* Separator columns (row 2) */}
+          {layout.separators.map((sep) => (
+            <div
+              key={`sep-${sep.column}`}
+              style={{
+                gridRow: 2,
+                gridColumn: sep.column,
+                backgroundColor: sep.type === 'group-sep' ? '#d0d0d0' : '#e0e0e0',
+              }}
+            />
+          ))}
+
+          {/* Dismiss button spans both rows */}
           <button
             onClick={handleDismiss}
             style={{
+              gridRow: '1 / 3',
+              gridColumn: layout.dismissColumn,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               padding: '10px 12px',
               border: 'none',
+              borderLeft: '1px solid #d0d0d0',
               background: 'none',
               cursor: 'pointer',
               color: '#999',
