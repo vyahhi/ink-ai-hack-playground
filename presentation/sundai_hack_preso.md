@@ -2,7 +2,7 @@
 marp: true
 theme: default
 paginate: true
-footer: "Ink AI — Sundai Club Hackathon — March 29, 2026"
+footer: "Ink AI — Sundai Club Hack — March 29, 2026"
 style: |
   @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap');
   .handwritten {
@@ -491,7 +491,7 @@ Strokes become game moves. The computer responds automatically.
 **Path 2: Rectangle-with-X catalog**
 - Draw a rectangle → cross it with an X → pick from a menu
 - Just: `render()` + `acceptInk()`
-- **Easier for hackathon project**
+- **Easier for hack project**
 
 Both coexist — start with catalog, structure interpretation later.
 
@@ -614,7 +614,7 @@ ink-ai-hack-playground/
 ```
 
 ```bash
-git clone https://github.com/anthropics/ink-ai-hack-playground.git
+git clone https://github.com/note-ai-inc/ink-ai-hack-playground.git
 cd ink-ai-hack-playground
 cp .env.example .env.local
 # set your key in .env.local:
@@ -653,7 +653,7 @@ npm install && npm run dev
 .cols .right img { max-height: 500px; max-width: 100%; }
 </style>
 
-## Hackathon ideas: games
+## Hack ideas: games
 
 <div class="cols">
 <div class="left">
@@ -681,24 +681,26 @@ Build on HW reco + grid/cell mechanics.
 
 <style scoped>
 .cols { display: flex; gap: 30px; align-items: center; }
-.cols .left { flex: 1; font-size: 0.9em }
-.cols .right { flex: 1.2; display: flex; justify-content: center; }
+.cols .left { flex: 2; font-size: 0.9em }
+.cols .right { flex: 1; display: flex; justify-content: center; }
 .cols .right img { max-height: 500px; max-width: 100%; }
 </style>
 
-## Hackathon ideas: data visualization & productivity
+## Hack ideas: data visualization & productivity
 
 <div class="cols">
 <div class="left">
 
-- **Bar / Line charts**
-  Draw axes + data points → structured chart
+- **Bar / line / pie charts**
+  Sketch charts; generate clean, editable visualizations
 - **Structured tables**
-  Grid of cells with HWR, basic formulas
-- **Checkbox lists**
-  Draw a checkbox → tappable checklist
-- **Mind maps**
-  Connected bubbles with auto-layout
+  Draw rough table; convert into structured data
+- **Gantt timeline**
+  Draw timeline; auto-generate project plan or calendar
+- **Dynamic templates**
+  Create dashboard: journal+calendar+to-dos+meeting snippets
+- **Forms to surveys**
+  Draw form layout; generate functional fillable survey
 
 </div>
 <div class="right">
@@ -712,25 +714,28 @@ Build on HW reco + grid/cell mechanics.
 
 <style scoped>
 .cols { display: flex; gap: 30px; align-items: center; }
-.cols .left { flex: 1.33; font-size: 0.9em }
+.cols .left { flex: 2; font-size: 0.9em }
 .cols .right { flex: 1; display: flex; flex-direction: column; align-items: center; }
 .cols .right img { max-height: 400px; max-width: 100%; }
 .cols .right .caption { font-size: 0.7em; margin-top: 8px; text-align: center; }
 </style>
 
-## Hackathon ideas: STEM & learning
+## Hack ideas: Academic & STEM learning
 
 <div class="cols">
 <div class="left">
 
-- **Molecule diagrams**
-  Element symbols + bonds → chemistry structures
-- **Circuit diagrams**
-  Logic gates → simulate truth tables
-- **Sheet music**
-  Draw a staff → place notes → playback
-- **Code editor**
-  Write code by hand → HWR → syntax highlight → execute
+- **Chemistry molecules**
+  Reco molecular diagrams; provide structure + interpretation
+- **Circuit simulator**
+  Draw circuit diagram; simulate voltage/current behavior
+- **Math Equation/Solver**
+  Reco equations and use solver for step-by-step solutions
+- **Physics Sim**
+  Draw ramps, pulleys, pendulums; simulate motion & forces.
+- **Kinematics Playground**
+  Sketch objects; simulate motion-specific scenarios
+  like friction, acceleration, and constraints.
 
 </div>
 <div class="right">
@@ -745,29 +750,92 @@ Build on HW reco + grid/cell mechanics.
 
 <style scoped>
 .cols { display: flex; gap: 30px; align-items: center; }
-.cols .left { flex: 1; font-size: 0.9em }
+.cols .left { flex: 2; font-size: 0.9em }
 .cols .right { flex: 1; display: flex; justify-content: center; }
 .cols .right img { max-height: 600px; max-width: 100%; }
 </style>
 
-## Hackathon ideas: creative & other
+## Hack ideas: creative & other
 
 <div class="cols">
 <div class="left">
 
-- **Maze**
-  Algorithmically generated, trace path with stylus
-- **Nonogram / Picross**
-  Fill cells to reveal pixel art
 - **Sketch to video**
-  Draw an object → record a prompt → Animate that object accordingly
-- **Ask the Coordinator**
-  Circled "?" → LLM answers rendered as handwriting
+  Draw object, record prompt; animate object accordingly
+- **Sheet music**
+  Draw staff and place notes → playback
+- **Image generation**
+  Sketch turns into refined AI-generated imagery
+- **3D model**
+  Multi-view sketch becomes rotatable 3D object
 
 </div>
 <div class="right">
 
-<img src="assets/sax.gif">
+<img src="assets/flag.gif">
+
+</div>
+</div>
+
+---
+
+<style scoped>
+.cols { display: flex; gap: 30px; align-items: center; }
+.cols .left { flex: 1.8; font-size: 0.9em }
+.cols .right { flex: 1; display: flex; justify-content: center; }
+.cols .right img { max-height: 600px; max-width: 100%; }
+</style>
+
+## Hack ideas: domain-specific recognition
+
+<div class="cols">
+<div class="left">
+
+- **Flowchart**
+  Turn rough diagrams into executable logic or code flows
+- **Mind map**
+  Convert freeform nodes into structured interactive graphs
+- **Architectural rendering**
+  Plan/elevation generates full 3D environment
+- **Floor plan editing**
+  Import plan, sketch changes (walls, windows); update plan
+- **Slide deck**
+  Rough storyboard becomes polished presentation
+
+</div>
+<div class="right">
+
+<img src="assets/floorplan.png">
+
+</div>
+</div>
+
+---
+
+<style scoped>
+.cols { display: flex; gap: 30px; align-items: center; }
+.cols .left { flex: 1.5; font-size: 0.9em }
+.cols .right { flex: 1; display: flex; justify-content: center; }
+.cols .right img { max-height: 600px; max-width: 100%; }
+</style>
+
+## Hack ideas: app & UI generation
+
+<div class="cols">
+<div class="left">
+
+- **Interactive UI prototype**
+  Hand-drawn UI interactive with sketch aesthetic
+- **App prototype**
+  UI sketch to no-code working prototype
+  Bonus: multi-platform Export
+- **UI components**
+  Reco buttons, forms, nav bars and make interactive
+
+</div>
+<div class="right">
+
+<img src="assets/handdrawn-ui.webp">
 
 </div>
 </div>
@@ -778,7 +846,7 @@ Build on HW reco + grid/cell mechanics.
 .content { font-size: 0.9em }
 </style>
 
-## Hackathon ideas: beyond elements
+## Hack ideas: beyond elements
 
 <div class="content">
 
@@ -807,21 +875,3 @@ Build on HW reco + grid/cell mechanics.
 - We'll be here all day to help
 
 **Show us something we haven't imagined yet.**
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const svgs = document.querySelectorAll('svg[data-marpit-svg]');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.querySelectorAll('img[src$=".gif"]').forEach(img => {
-          const src = img.src;
-          img.src = '';
-          img.src = src;
-        });
-      }
-    });
-  }, { threshold: 0.5 });
-  svgs.forEach(svg => observer.observe(svg));
-});
-</script>
