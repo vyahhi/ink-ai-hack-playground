@@ -320,7 +320,7 @@ Each stroke = ordered array of these.
 
 ## Why polylines matter
 
-<div style="font-size: 1.4em;">
+<div style="font-size: 1.15em;">
 
 - **ML training data**
   - Sequence + timing + pressure = richer signal than pixels
@@ -807,3 +807,21 @@ Build on HW reco + grid/cell mechanics.
 - We'll be here all day to help
 
 **Show us something we haven't imagined yet.**
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const svgs = document.querySelectorAll('svg[data-marpit-svg]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('img[src$=".gif"]').forEach(img => {
+          const src = img.src;
+          img.src = '';
+          img.src = src;
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+  svgs.forEach(svg => observer.observe(svg));
+});
+</script>
