@@ -617,8 +617,9 @@ ink-ai-hack-playground/
 git clone https://github.com/note-ai-inc/ink-ai-hack-playground.git
 cd ink-ai-hack-playground
 cp .env.example .env.local
-# set your key in .env.local:
-# OPENROUTER_API_KEY=sk-or-v1-your-key-here
+# set these in .env.local:
+# INK_RECOGNITION_API_URL=https://strokes.hack.ink.ai
+# INK_OPENROUTER_API_KEY=sk-or-v1-your-key-here
 npm install && npm run dev
 ```
 
@@ -844,24 +845,178 @@ Build on HW reco + grid/cell mechanics.
 
 <style scoped>
 .content { font-size: 0.9em }
+.content li + li { margin-top: 12px; }
 </style>
 
-## Hack ideas: beyond elements
+## Hack ideas: research challenges
 
 <div class="content">
 
-- **InkSight**
-  - Reverse-engineer handwritten content from images into strokes
-  - *InkSight: Offline-to-Online Handwriting Conversion...*
-  - https://arxiv.org/abs/2402.05804
-- **Multi-writer models**
-  - Train synthesis model on large stroke-based data sets with style embedding
-    (e.g. UNIPEN, IAM-OnDB)
-  - Challenge: make given set of handwritten strokes look **nicer** (stroke-to-stroke)
 - **Tokenization**
-  - Current tokenization: timestamped 2D points
-  - Equivalent to single-character tokens in ChatGPT (too short!)
-  - Use higer-order tokens: Bezier curves, B-splines, ...
+  - Richer stroke representations using Bezier curves, B-splines instead of raw points
+- **InkSight**
+  - Reverse-engineer handwritten content from images back into editable strokes
+- **Multi-writer models**
+  - Train style-aware synthesis models to beautify or generate handwriting
+- **Inkteractivity foundation model**
+  - Suno for ink: recognize, create, and interact with everything you write or draw
+
+</div>
+
+---
+
+<style scoped>
+.cols { display: flex; gap: 30px; align-items: center; }
+.cols .left { flex: 2.5; font-size: 0.82em }
+.cols .left li + li { margin-top: 8px; }
+.cols .right { flex: 1; display: flex; justify-content: center; }
+.cols .right img { max-height: 600px; max-width: 100%; position: relative; top: -50px; }
+</style>
+
+## Research challenge: Tokenization
+
+<div class="cols">
+<div class="left">
+
+- **Point-by-point is the norm**
+  - [Cursive Transformer](https://arxiv.org/abs/2504.00051), [TrInk](https://arxiv.org/abs/2508.21098) tokenize each point as polar offsets
+  - Works — but ~286 tokens/word, like spelling text one char at a time
+  - Long sequences limit context window and slow inference
+- **Bezier fitting ≈ byte-pair encoding for strokes**
+  - Cubic curves: 4 control points capture what dozens of samples do
+  - 2–8× compression: ~30 segments/word vs ~250 raw points
+  - Loops and corners are hard — naive fitting shortcuts through them
+- **Open questions**
+  - Encoding the Bezier octet (8 floats) as discrete transformer tokens
+  - Cumulative drift from autoregressive relative-coordinate generation
+  - Whether compression gains actually improve generation quality
+
+</div>
+<div class="right">
+
+<img src="assets/tokenization-viz.png">
+
+</div>
+</div>
+
+---
+
+<style scoped>
+.cols { display: flex; gap: 30px; align-items: center; }
+.cols .left { flex: 2.5; font-size: 0.82em }
+.cols .left li + li { margin-top: 8px; }
+.cols .right { flex: 1; display: flex; justify-content: center; }
+.cols .right img { max-height: 600px; max-width: 100%; position: relative; top: -30px; }
+</style>
+
+## Research challenge: InkSight
+
+<div class="cols">
+<div class="left">
+
+- **Offline → online conversion**
+  - Extract stroke data (x, y, pen state) from handwriting images
+  - [InkSight](https://arxiv.org/abs/2402.05804) works well on clean, non-cursive, word-level crops
+  - Full pages need OCR line detection first — imperfect today
+- **Training data is the bottleneck**
+  - Millions of handwriting images; almost no stroke-level datasets
+  - Fonts = filled outlines, not strokes — need skeletonization
+  - Quality-sensitive: blur, tilt, shadows, cursive joins all hurt
+- **Open questions**
+  - Scaling to cursive and connected scripts with high fidelity
+  - Font skeleton → plausible stroke order, direction, and dynamics
+  - Bridging the domain gap between synthetic and natural strokes
+
+</div>
+<div class="right">
+
+<img src="assets/inksight-viz.png">
+
+</div>
+</div>
+
+---
+
+<style scoped>
+.cols { display: flex; gap: 20px; align-items: flex-start; }
+.cols .left { flex: 1.5; font-size: 0.82em }
+.cols .left li + li { margin-top: 8px; }
+.cols .right { flex: 1; font-size: 0.72em }
+.cols .right table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+.cols .right th { background: #1a2744; color: white; padding: 4px 6px; text-align: left; }
+.cols .right td { padding: 3px 6px; border-bottom: 1px solid #ddd; }
+.cols .right tr:nth-child(even) { background: #f0ede4; }
+.cols .right tr.sep td { border-bottom: 2px solid #1a2744; padding: 0; height: 0; line-height: 0; background: transparent; }
+.cols .right .footnote { font-size: 0.8em; color: #666; margin-top: 6px; }
+</style>
+
+## Research challenge: Multi-writer models
+
+<div class="cols">
+<div class="left">
+
+- **Style-aware synthesis**
+  - Generate handwriting in any writer's style
+  - Disentangle content (what) from style (how) in strokes
+  - BRUSH: 170 writers, same prompt = direct comparison
+- **Stroke beautification**
+  - Make rough strokes nicer (stroke-to-stroke)
+  - Preserve writer identity while improving legibility
+  - Geometry problem, not pixels — work on polylines
+- **Open questions**
+  - Encoding style / teaching what "nicer" means
+  - Matching local style variations (e.g. CAPS vs cursive)
+  - Objective metrics for "nicer" handwriting
+
+</div>
+<div class="right">
+
+**Datasets**
+
+<table>
+<tr><th>Dataset</th><th>Samples</th><th>Writers</th><th>Format</th></tr>
+<tr><td><a href="https://fki.tic.heia-fr.ch/databases/iam-on-line-handwriting-database">IAMonDB</a></td><td>11.6K lines</td><td>198</td><td>dx, dy, pen</td></tr>
+<tr><td><a href="https://zenodo.org/records/1195803">UNIPEN</a></td><td>117K segs</td><td>2,200+</td><td>abs x, y</td></tr>
+<tr><td><a href="https://github.com/brownvc/decoupled-style-descriptors">BRUSH</a></td><td>27.6K</td><td>170</td><td>abs x, y, pen</td></tr>
+<tr class="sep"><td colspan="4"></td></tr>
+<tr><td><a href="https://drive.google.com/drive/folders/1wE9isVzXGj0s5n6BxY0r7h0JbxAqkdU-?usp=sharing">Ink AI 9K</a></td><td>9K words</td><td>1</td><td>abs x, y, pen</td></tr>
+<tr><td><a href="https://drive.google.com/drive/folders/1wE9isVzXGj0s5n6BxY0r7h0JbxAqkdU-?usp=sharing">Ink AI 650K</a></td><td>650K words</td><td>1 (aug)</td><td>abs x, y, pen</td></tr>
+</table>
+
+<div class="footnote">
+
+- IAMonDB = relative offsets
+- UNIPEN = absolute + structural markers
+- BRUSH & Ink AI = absolute + pen state
+- Ink AI 650K split into A (323K) + B (324K)
+
+</div>
+
+</div>
+</div>
+
+---
+
+<style scoped>
+.content { font-size: 0.9em }
+</style>
+
+## Research challenge: Inkteractivity foundation model
+
+<div class="content">
+
+- **One model, full pipeline**
+  - Suno = compose + arrange + perform + produce music. Do that for ink
+  - Creation + interaction unified — no recognize-then-hand-off
+  - Mixed pages: text, sketches, annotations, widgets parsed as one
+- **Universal ink understanding**
+  - Text, math, chemistry, diagrams, games — all from the same strokes
+  - Structures become interactive: grid → game, circuit → simulation
+  - Native gestures + context-aware: same mark adapts to surroundings
+- **Learns from every stroke**
+  - Adapts from corrections in real time
+  - Style-preserving: generated content matches your handwriting
+  - Data flywheel: every stroke and correction feeds back into the model
 
 </div>
 

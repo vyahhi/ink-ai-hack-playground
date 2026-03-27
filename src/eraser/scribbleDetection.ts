@@ -1,5 +1,5 @@
 // Scribble gesture detection for implicit erasing
-// Ported from kotlin-app StrokeRecognizer.kt - uses weighted scoring system
+// Uses weighted scoring system for scribble gesture detection
 
 import type { Stroke, Element, Offset, BoundingBox } from '../types';
 import { getStrokeBoundingBox } from '../types';
@@ -13,7 +13,7 @@ export interface ScribbleDetectionOptions {
   skipNonAdjacentSegments?: number; // Skip this many segments when checking intersections to avoid false positives at corners (default: 2)
 }
 
-// Thresholds from kotlin-app StrokeRecognizer
+// Thresholds from scribble detection config
 const SCRIBBLE_THRESHOLDS = {
   // Direction change ratio thresholds
   directionChangeStrong: 0.15,
@@ -42,7 +42,7 @@ const SCRIBBLE_HARD_REQUIREMENTS = {
   minPathLength: 100,
 };
 
-// Weights from kotlin-app StrokeRecognizer (extended with reversal scoring)
+// Weights from scribble detection config (extended with reversal scoring)
 const SCRIBBLE_WEIGHTS = {
   directionChangeStrong: 2,
   directionChangeModerate: 1,
@@ -144,7 +144,7 @@ export function countDirectionReversals(points: Offset[]): number {
 /**
  * Count the number of significant direction changes in a stroke.
  * A direction change is counted when the angle difference exceeds 45 degrees.
- * Ported from kotlin-app StrokeRecognizer.kt
+ * Scribble detection heuristic
  */
 export function countDirectionChanges(points: Offset[]): number {
   if (points.length < 3) return 0;
@@ -189,7 +189,7 @@ function calculatePointCurvature(p1: Offset, p2: Offset, p3: Offset): number {
 /**
  * Calculate average curvature across all points in a stroke.
  * Higher values indicate more curved/wavy strokes.
- * Ported from kotlin-app StrokeRecognizer.kt
+ * Scribble detection heuristic
  */
 export function calculateAverageCurvature(points: Offset[]): number {
   if (points.length < 3) return 0;
@@ -210,7 +210,7 @@ export function calculateAverageCurvature(points: Offset[]): number {
  * Calculate bounding box compactness (min/max ratio).
  * Values closer to 1.0 indicate a square-ish shape.
  * Scribbles tend to have higher compactness (more square-ish).
- * Ported from kotlin-app StrokeRecognizer.kt
+ * Scribble detection heuristic
  */
 export function calculateBoundingBoxCompactness(points: Offset[]): number {
   if (points.length === 0) return 0;
@@ -236,7 +236,7 @@ export function calculateBoundingBoxCompactness(points: Offset[]): number {
 /**
  * Calculate stroke density (total stroke length / bounding box area).
  * Higher values indicate more ink packed into a small area.
- * Ported from kotlin-app StrokeRecognizer.kt
+ * Scribble detection heuristic
  */
 export function calculateStrokeDensity(points: Offset[]): number {
   if (points.length < 2) return 0;
@@ -265,7 +265,7 @@ export function calculateStrokeDensity(points: Offset[]): number {
 }
 
 /**
- * Calculate scribble score using the weighted scoring system from kotlin-app.
+ * Calculate scribble score using the weighted scoring system for scribble detection.
  * Returns the total score based on all 5 characteristics.
  */
 export function calculateScribbleScore(points: Offset[], selfIntersectionCount: number): number {
@@ -508,7 +508,7 @@ export function logScribbleScoreBreakdown(breakdown: ScribbleScoreBreakdown, rea
 
 /**
  * Determine if points form a scribble pattern using the weighted scoring system.
- * Ported from kotlin-app StrokeRecognizer.kt isScribble()
+ * Scribble detection heuristic isScribble()
  *
  * Now includes hard requirements that must ALL be met:
  * 1. Minimum bounding box size (to avoid triggering on small dots)
@@ -596,7 +596,7 @@ export function strokeOverlapsElements(
 
 /**
  * Determine if a stroke is a scribble-erase gesture.
- * Uses the weighted scoring system from kotlin-app StrokeRecognizer.kt
+ * Uses the weighted scoring system from scribble detection config.kt
  * that considers:
  * 1. Direction change ratio
  * 2. Curvature
@@ -616,7 +616,7 @@ export function isScribbleEraseGesture(
 
   const points = getStrokePoints(stroke);
 
-  // Must have enough points to classify (matches kotlin-app threshold)
+  // Must have enough points to classify (minimum point threshold)
   if (points.length < 10) {
     debugLog.info(`Scribble: ✗ NOT SCRIBBLE (only ${points.length} points, need 10+)`);
     return false;
@@ -757,7 +757,7 @@ export function multiStrokeOverlapsElements(
  * Determine if multiple strokes together form a scribble-erase gesture.
  * This allows a scribble gesture to be detected even if the user briefly
  * lifts the stylus during the scribble motion.
- * Uses the weighted scoring system from kotlin-app StrokeRecognizer.kt
+ * Uses the weighted scoring system from scribble detection config.kt
  */
 export function isMultiStrokeScribbleEraseGesture(
   strokes: Stroke[],
@@ -776,7 +776,7 @@ export function isMultiStrokeScribbleEraseGesture(
   // Combine all points from all strokes
   const allPoints = getMultiStrokePoints(strokes);
 
-  // Must have enough points to classify (matches kotlin-app threshold)
+  // Must have enough points to classify (minimum point threshold)
   if (allPoints.length < 10) {
     debugLog.info(`Scribble: ✗ NOT SCRIBBLE (only ${allPoints.length} points, need 10+)`);
     return false;

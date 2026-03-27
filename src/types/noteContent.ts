@@ -1,4 +1,4 @@
-// NoteContent container matching the protobuf schema
+// NoteContent container
 
 import type { Element } from './elements';
 

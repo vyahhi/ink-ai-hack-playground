@@ -1,4 +1,4 @@
-// Primitives matching the protobuf schema
+// Core primitive types
 
 export interface Offset {
   x: number;

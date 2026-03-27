@@ -1,5 +1,5 @@
 // Lasso selection detection utilities
-// Ported from Android ink-ai-kotlin-app lasso implementation
+// Lasso selection detection
 
 import type { Offset, BoundingBox } from '../types';
 import { boundingBoxFromOffsets, offsetDistance } from '../types';

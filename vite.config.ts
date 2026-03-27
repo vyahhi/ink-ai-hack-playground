@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'INK_')
-  const recognitionApiUrl = env.INK_RECOGNITION_API_URL || 'https://strokes.hack.ink.ai'
+  const recognitionApiUrl = env.INK_RECOGNITION_API_URL || 'http://localhost:8080'
 
   return {
     envPrefix: 'INK_',

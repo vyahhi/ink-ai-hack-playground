@@ -1,4 +1,4 @@
-# Sundai Hackathon Presentation
+# Sundai Hack Presentation
 
 A [Marp](https://marp.app/) slide deck built in Markdown.
 
@@ -12,7 +12,7 @@ code --install-extension marp-team.marp-vscode
 
 ## Editing
 
-Open `sundai_hackathon_preso.md` in VS Code. The Marp extension renders a live preview in the editor.
+Open `sundai_hack_preso.md` in VS Code. The Marp extension renders a live preview in the editor.
 
 To open the preview, use **Ctrl+Shift+V** (or **Cmd+Shift+V** on macOS), or open the Command Palette and run **Markdown: Open Preview to the Side**.
 

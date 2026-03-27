@@ -23,9 +23,9 @@ cp .env.example .env
 Required variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `INK_RECOGNITION_API_URL` | Handwriting recognition API endpoint | `https://strokes.hack.ink.ai` |
+| `INK_RECOGNITION_API_URL` | Handwriting recognition API endpoint | *(none — must be set)* |
 
-The default value in `.env.example` points to the hack recognition API and works out of the box.
+You'll need a running instance of the recognition API. Set the URL in your `.env` file.
 
 ### Running
 ```bash
@@ -41,5 +41,3 @@ and sent to the handwriting recognition API. Recognized content is converted
 into interactive elements (text, shapes, TicTacToe grids, coordinate planes).
 
 See `docs/New element HOWTO.md` for a guide on adding new element types.
-
-See `ink-prototyping-app-plan.md` for the original design document.

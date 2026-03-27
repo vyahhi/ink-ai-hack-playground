@@ -1,4 +1,4 @@
-// Brush and stroke types matching the protobuf schema
+// Brush and stroke types
 
 export const StockBrush = {
   MARKER: 'MARKER',

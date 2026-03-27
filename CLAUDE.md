@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Ink Playground is a React + TypeScript + Vite web app for rapid prototyping of interactive ink-based elements. It renders, edits, and recognizes handwritten content while maintaining data compatibility with a Kotlin-based NoteContent structure (protobuf schema).
+Ink Playground is a React + TypeScript + Vite web app for rapid prototyping of interactive ink-based elements. It renders, edits, and recognizes handwritten content.
 
 Features: Interactive ink canvas, handwriting recognition via REST API, interactive elements (games, text, shapes), eraser with stroke splitting, undo/redo. Uses OpenRouter SDK for LLM inference.
 
@@ -30,7 +30,7 @@ There is no test framework configured — no unit or integration tests exist.
 
 ### Directory Structure
 
-- `src/types/` — TypeScript interfaces mirroring protobuf schema (primitives, brush, elements, noteContent)
+- `src/types/` — TypeScript interfaces (primitives, brush, elements, noteContent)
 - `src/canvas/` — Core rendering: InkCanvas.tsx (main component), ViewportManager.ts (pan/zoom), StrokeRenderer.ts
 - `src/elements/` — Plugin-based element system, split into:
   - `registry/` — ElementPlugin interface and ElementRegistry dispatcher
@@ -70,7 +70,7 @@ There is no test framework configured — no unit or integration tests exist.
 
 ## Configuration
 
-**Environment**: `VITE_RECOGNITION_API_URL=https://groupstrokes.dev.ink.ai` (default in `.env.example` works out of the box)
+**Environment**: Copy `.env.example` to `.env` and fill in your API keys. `INK_RECOGNITION_API_URL` must be set to a running recognition service endpoint.
 
 **TypeScript**: Strict mode, ES2022 target, react-jsx
 
