@@ -115,9 +115,9 @@ function triggerDownload(blob: Blob, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-export async function exportCanvasAsZip(noteElements: NoteElements): Promise<void> {
+export async function generateCanvasZip(noteElements: NoteElements): Promise<Blob> {
   const { elements } = noteElements;
-  if (elements.length === 0) return;
+  if (elements.length === 0) throw new Error('No elements to export');
 
   // Ensure images are decoded before we start rendering
   await preloadImages(collectDataUrls(elements));
@@ -149,8 +149,42 @@ export async function exportCanvasAsZip(noteElements: NoteElements): Promise<voi
   // 3. JSON data
   zip.file('data.json', JSON.stringify(noteElements, null, 2));
 
-  // Generate and download
-  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  return zip.generateAsync({ type: 'blob' });
+}
+
+export async function exportCanvasAsZip(noteElements: NoteElements): Promise<void> {
+  const zipBlob = await generateCanvasZip(noteElements);
   const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
   triggerDownload(zipBlob, `ink-playground-${timestamp}.zip`);
+}
+
+const UPLOAD_API_URL = import.meta.env.INK_UPLOAD_API_URL as string | undefined;
+
+export async function shareCanvasToTelegram(noteElements: NoteElements): Promise<void> {
+  if (!UPLOAD_API_URL) {
+    throw new Error('INK_UPLOAD_API_URL is not configured');
+  }
+
+  const zipBlob = await generateCanvasZip(noteElements);
+
+  // Upload ZIP to backend
+  const formData = new FormData();
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+  formData.append('file', zipBlob, `ink-playground-${timestamp}.zip`);
+
+  const response = await fetch(`${UPLOAD_API_URL}/api/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed: ${response.statusText}`);
+  }
+
+  const { url } = await response.json();
+
+  // Open Telegram share with download link
+  const text = 'Build this sundai project';
+  const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  window.open(telegramUrl, '_blank');
 }
