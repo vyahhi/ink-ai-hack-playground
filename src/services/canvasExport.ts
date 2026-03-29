@@ -183,8 +183,9 @@ export async function shareCanvasToTelegram(noteElements: NoteElements): Promise
 
   const { url } = await response.json();
 
-  // Open Telegram share with download link
-  const text = 'Build a new Sundai project from these designs. The attached ZIP contains sketches, specs, and descriptions — use them to scaffold and implement the project.';
-  const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-  window.open(telegramUrl, '_blank');
+  // Open @sundaiclaw_bot chat in Telegram with pre-filled message
+  // tg://resolve pre-fills the input field on native Telegram apps (iOS/Android/Desktop)
+  const text = `Build a new Sundai project from these designs. The attached ZIP contains sketches, specs, and descriptions — use them to scaffold and implement the project.\n\n${url}`;
+  const telegramUrl = `tg://resolve?domain=sundaiclaw_bot&text=${encodeURIComponent(text)}`;
+  window.open(telegramUrl, '_self');
 }
