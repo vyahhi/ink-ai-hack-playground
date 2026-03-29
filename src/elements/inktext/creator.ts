@@ -316,7 +316,7 @@ export async function createFromInk(
       result = await service.recognizeGoogle(strokes);
       debugLog.info('InkText: recognition returned', { rawText: result?.rawText });
     } catch (error) {
-      debugLog.error('InkText recognition failed', error);
+      debugLog.error('InkText recognition failed', { reason: error instanceof Error ? error.message : String(error) });
       return null;
     }
   }

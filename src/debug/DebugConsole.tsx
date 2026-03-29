@@ -65,9 +65,11 @@ export function DebugConsole({ visible }: DebugConsoleProps) {
       });
       const level = entry.level === 'error' ? 'ERR' : entry.level === 'warn' ? 'WRN' : entry.level === 'action' ? 'ACT' : 'INF';
       const data = entry.data !== undefined && entry.data !== null
-        ? typeof entry.data === 'object'
-          ? ` [${Object.entries(entry.data as Record<string, unknown>).map(([k, v]) => `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`).join(' ')}]`
-          : ` [${entry.data}]`
+        ? entry.data instanceof Error
+          ? ` [${entry.data.message}]`
+          : typeof entry.data === 'object'
+            ? ` [${Object.entries(entry.data as Record<string, unknown>).map(([k, v]) => `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`).join(' ')}]`
+            : ` [${entry.data}]`
         : '';
       return `${time} [${level}] ${entry.message}${data}`;
     }).join('\n');
@@ -105,6 +107,7 @@ export function DebugConsole({ visible }: DebugConsoleProps) {
 
   const formatData = (data: unknown): string => {
     if (data === undefined || data === null) return '';
+    if (data instanceof Error) return ` [${data.message}]`;
     if (typeof data === 'object') {
       const obj = data as Record<string, unknown>;
       const parts = Object.entries(obj)
