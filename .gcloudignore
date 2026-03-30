@@ -1,0 +1,16 @@
+# Cloud Build ignore file
+# When this file exists, gcloud uses it instead of .gitignore for source uploads
+# IMPORTANT: .env.production must NOT be listed here — it contains production
+# config that Vite needs at build time
+
+node_modules
+dist
+dist-ssr
+.git
+.idea
+.vscode
+.DS_Store
+*.local
+.env
+.env.local
+server/uploads
